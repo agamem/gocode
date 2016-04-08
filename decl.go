@@ -20,6 +20,7 @@ const (
 	// these are in a sorted order
 	decl_const
 	decl_func
+	decl_import
 	decl_package
 	decl_type
 	decl_var
@@ -37,6 +38,8 @@ func (this decl_class) String() string {
 		return "const"
 	case decl_func:
 		return "func"
+	case decl_import:
+		return "import"
 	case decl_package:
 		return "package"
 	case decl_type:
@@ -324,6 +327,9 @@ func method_of(d ast.Decl) string {
 		if t.Recv != nil {
 			switch t := t.Recv.List[0].Type.(type) {
 			case *ast.StarExpr:
+				if se, ok := t.X.(*ast.SelectorExpr); ok {
+					return se.Sel.Name
+				}
 				return t.X.(*ast.Ident).Name
 			case *ast.Ident:
 				return t.Name
